@@ -1,12 +1,16 @@
-from retrieval.search import Search
+from retrieval.search.search import Search
 from typing import List,Dict,Any
 import numpy as np
+from sentence_transformers import SentenceTransformer
+
+
+
 
 
 class SemanticSearch(Search):
     """Semantic embedding-based search implementation"""
 
-    def __init__(self, embedding_model=None):
+    def __init__(self, embedding_model=SentenceTransformer('all-MiniLM-L6-v2')):
         self.documents = []
         self.embeddings = []
         self.embedding_model = embedding_model
@@ -17,10 +21,13 @@ class SemanticSearch(Search):
             raise ValueError("Embedding model not provided in __init__")
 
         self.documents = documents
+        # Extract all page_content
+        texts = [doc.page_content for doc in documents]
         # Pre-compute embeddings for all documents
         self.embeddings = []
-        for doc in documents:
-            embedding = self.embedding_model.embed_query(doc)
+
+        for doc in texts:
+            embedding = self.embedding_model.encode(doc)
             self.embeddings.append(embedding)
 
         self.embeddings = np.array(self.embeddings)
@@ -33,7 +40,7 @@ class SemanticSearch(Search):
 
         # Embed query
         query_embedding = np.array(
-            self.embedding_model.embed_query(query)
+            self.embedding_model.encode(query)
         )
 
         # Calculate cosine similarity with all documents

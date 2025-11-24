@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 from rank_bm25 import BM25Okapi
 import numpy as np
-from retrieval.search import Search
+from retrieval.search.search import Search
 
 
 class BM25Search(Search):
@@ -16,7 +16,9 @@ class BM25Search(Search):
         """Build BM25 index from documents"""
         self.documents = documents
         # Tokenize documents (simple whitespace tokenization)
-        self.tokenized_docs = [doc.lower().split() for doc in documents]
+
+
+        self.tokenized_docs = [doc.page_content.lower().split() for doc in documents]
         # Create BM25 instance
         self.bm25 = BM25Okapi(self.tokenized_docs)
         print(f"✓ BM25 index built with {len(documents)} documents")
@@ -34,13 +36,20 @@ class BM25Search(Search):
         # Get top k results
         top_indices = np.argsort(scores)[-k:][::-1]
 
-        return [
-            {
-                "content": self.documents[idx],
-                "score": float(scores[idx]),
-                "index": int(idx)
-            }
-            for idx in top_indices if scores[idx] > 0
-        ]
+        results = []
+        for idx in top_indices:
+            if scores[idx] > 0:
+                doc = self.documents[idx]
+                # Extract content from Document object if needed
+                content = doc.page_content if hasattr(doc, 'page_content') else str(doc)
+
+                results.append({
+                    "content": content,
+                    "score": float(scores[idx]),
+                    "index": int(idx),
+                    "metadata": doc.metadata if hasattr(doc, 'metadata') else {}
+                })
+
+        return results
 
 

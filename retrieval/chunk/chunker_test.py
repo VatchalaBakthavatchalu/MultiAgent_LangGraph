@@ -1,9 +1,8 @@
-import chunk
 import os
 import sys
-sys.path.append("/Users/naresh/PycharmProjects/MultiAgent_LangGraph")
+sys.path.append("/")
 
-from retrieval.chunks import SchemaClassChunker
+from retrieval.chunk.chunks import SchemaClassChunker
 
 # Path to the schema file
 schema_path = os.path.join(os.path.dirname(__file__), "schema.py")

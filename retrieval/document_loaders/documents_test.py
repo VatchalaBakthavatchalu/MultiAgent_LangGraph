@@ -1,9 +1,9 @@
 from langchain_core.documents import Document
-from chunks import SchemaClassChunker  # your chunker class
+from retrieval.chunk.chunks import SchemaClassChunker  # your chunker class
 import re
 
 # Load your snf_models.py file as text
-with open("schema.py", "r") as f:
+with open("../schema.py", "r") as f:
     code_text = f.read()
 
 # Initialize the chunker

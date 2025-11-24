@@ -1,9 +1,16 @@
+from retrieval.search.semantic_search import SemanticSearch
+
+"""documents = [
+    "Machine learning is a subset of artificial intelligence",
+    "Python is a popular programming language for data science",
+    "Neural networks are inspired by biological neurons",
+]"""
 from langchain_core.documents import Document
-from chunks import SchemaClassChunker  # your chunker class
+from retrieval.chunk.chunks import SchemaClassChunker  # your chunker class
 import re
 
 # Load your snf_models.py file as text
-with open("schema.py", "r") as f:
+with open("../schema.py", "r") as f:
     code_text = f.read()
 
 # Initialize the chunker
@@ -33,5 +40,10 @@ for chunk in chunks:
     documents.append(doc)
 
 
+# Initialize with all-MiniLM-L6-v2 directly
+semantic_search = SemanticSearch()
+semantic_search.build_index(documents)
 
-
+results = semantic_search.search("user has admission to the facility", k=2)
+for result in results:
+    print(f"Score: {result['score']:.4f} - {result['content']}")
