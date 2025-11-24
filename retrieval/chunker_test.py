@@ -12,7 +12,7 @@ with open(schema_path, "r") as f:
     schema_text = f.read()
 
 # Chunk it
-chunker = SchemaClassChunker(max_chunk_size=1000)
+chunker = SchemaClassChunker(max_chunk_size=None)
 chunks = chunker.chunk(schema_text)
 
 for i, c in enumerate(chunks, 1):
